@@ -22,71 +22,42 @@ func main() {
 	lowerWord := strings.ToLower(word)
 
 	aryWords := strings.Split(lowerWord, "")
+	fmt.Printf("aryWords:%s\n", aryWords)
 
 	fmt.Println()
 
 	set := newSet()
-	parentString := ""
-	// includes := []int{}
-	for i, w := range aryWords {
-		set.add(fmt.Sprintf("%s%s", parentString, w))
-
-		parentString2 := fmt.Sprintf("%s%s", parentString, w)
-		for i2, w2 := range aryWords {
-			if i2 == i {
-				continue
-			}
-			set.add(fmt.Sprintf("%s%s", parentString2, w2))
-
-			parentString3 := fmt.Sprintf("%s%s", parentString2, w2)
-			for i3, w3 := range aryWords {
-				if i3 == i2 {
-					continue
-				}
-				if i3 == i {
-					continue
-				}
-				set.add(fmt.Sprintf("%s%s", parentString3, w3))
-
-				parentString4 := fmt.Sprintf("%s%s", parentString3, w3)
-				for i4, w4 := range aryWords {
-					if i4 == i3 {
-						continue
-					}
-					if i4 == i2 {
-						continue
-					}
-					if i4 == i {
-						continue
-					}
-					set.add(fmt.Sprintf("%s%s", parentString4, w4))
-
-					parentString5 := fmt.Sprintf("%s%s", parentString4, w4)
-					for i5, w5 := range aryWords {
-						if i5 == i4 {
-							continue
-						}
-						if i5 == i3 {
-							continue
-						}
-						if i5 == i2 {
-							continue
-						}
-						if i5 == i {
-							continue
-						}
-						set.add(fmt.Sprintf("%s%s", parentString5, w5))
-					}
-				}
-			}
-		}
-	}
+	combi("", aryWords, set, len(aryWords), []int{})
 
 	l := set.list()
 	sort.Strings(l)
 	// fmt.Println(l)
 	for _, c := range l {
 		fmt.Println(c)
+	}
+}
+
+func combi(parentCharacter string, characters []string, resultSet *set, len int, skipIndex []int) {
+	if len == 0 {
+		return
+	}
+
+	thistimeSkipIndex := skipIndex
+	for i, c := range characters {
+		addTargetWord := fmt.Sprintf("%s%s", parentCharacter, c)
+		thistimeSkipIndex = append(skipIndex, i)
+		skipFlg := false
+		for _, skip := range skipIndex {
+			if i == skip {
+				skipFlg = true
+			}
+		}
+		if skipFlg {
+			continue
+		}
+		resultSet.add(addTargetWord)
+
+		combi(addTargetWord, characters, resultSet, len-1, thistimeSkipIndex)
 	}
 }
 
