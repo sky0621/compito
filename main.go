@@ -5,11 +5,14 @@ import (
 	"os"
 	"sort"
 	"strings"
+	"time"
 )
 
 // FIXME this is prototype program
 // FIXME think package
 func main() {
+	start := time.Now()
+
 	// FIXME logging
 
 	args := os.Args
@@ -29,12 +32,20 @@ func main() {
 	set := newSet()
 	combi("", aryWords, set, len(aryWords), []int{})
 
+	next := time.Now()
+
 	l := set.list()
 	sort.Strings(l)
 	// fmt.Println(l)
 	for _, c := range l {
 		fmt.Println(c)
 	}
+
+	end := time.Now()
+	fmt.Println("===========================")
+	fmt.Printf("最初から単語の組み合わせ作成まで %f秒\n", (end.Sub(next)).Seconds())
+	fmt.Printf("最初から最後の標準出力まで       %f秒\n", (end.Sub(start)).Seconds())
+	fmt.Println("===========================")
 }
 
 func combi(parentCharacter string, characters []string, resultSet *set, len int, skipIndex []int) {
