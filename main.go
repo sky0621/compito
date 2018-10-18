@@ -30,7 +30,7 @@ func main() {
 	fmt.Println()
 
 	set := newSet()
-	combi("", aryWords, set, len(aryWords), []int{})
+	combiMain(aryWords, set)
 
 	next := time.Now()
 
@@ -46,6 +46,12 @@ func main() {
 	fmt.Printf("最初から単語の組み合わせ作成まで %f秒\n", (end.Sub(next)).Seconds())
 	fmt.Printf("最初から最後の標準出力まで       %f秒\n", (end.Sub(start)).Seconds())
 	fmt.Println("===========================")
+}
+
+func combiMain(characters []string, resultSet *set) {
+
+	combi("", characters, resultSet, len(characters), []int{})
+
 }
 
 func combi(parentCharacter string, characters []string, resultSet *set, len int, skipIndex []int) {
