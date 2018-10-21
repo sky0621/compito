@@ -5,6 +5,7 @@ import (
 	"os"
 	"sort"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -25,12 +26,13 @@ func main() {
 	lowerWord := strings.ToLower(word)
 
 	aryWords := strings.Split(lowerWord, "")
+	sort.Strings(aryWords)
 	fmt.Printf("aryWords:%s\n", aryWords)
 
 	fmt.Println()
 
 	set := newSet()
-	combiMain(aryWords, set)
+	addWord(set, aryWords, "")
 
 	next := time.Now()
 
@@ -48,34 +50,27 @@ func main() {
 	fmt.Println("===========================")
 }
 
-func combiMain(characters []string, resultSet *set) {
-
-	combi("", characters, resultSet, len(characters), []int{})
-
+func addWord(set *set, characters []string, parentChar string) {
+	chLen := len(characters)
+	for i, c := range characters {
+		set.add(fmt.Sprintf("%s%s", parentChar, c))
+		cpCharacters := make([]string, chLen, chLen)
+		copy(cpCharacters, characters)
+		addWord(set, getRemaining(cpCharacters, i), fmt.Sprintf("%s%s", parentChar, c))
+	}
 }
 
-func combi(parentCharacter string, characters []string, resultSet *set, len int, skipIndex []int) {
-	if len == 0 {
-		return
+func getRemaining(characters []string, index int) []string {
+	if characters == nil {
+		return nil
+	}
+	if len(characters) <= index {
+		return nil
 	}
 
-	thistimeSkipIndex := skipIndex
-	for i, c := range characters {
-		addTargetWord := fmt.Sprintf("%s%s", parentCharacter, c)
-		thistimeSkipIndex = append(skipIndex, i)
-		skipFlg := false
-		for _, skip := range skipIndex {
-			if i == skip {
-				skipFlg = true
-			}
-		}
-		if skipFlg {
-			continue
-		}
-		resultSet.add(addTargetWord)
-
-		combi(addTargetWord, characters, resultSet, len-1, thistimeSkipIndex)
-	}
+	before := characters[:index]
+	after := characters[index+1:]
+	return append(before, after...)
 }
 
 // -------------------------------------------------------------
@@ -89,10 +84,13 @@ func newSet() *set {
 }
 
 type set struct {
-	m map[string]struct{}
+	m   map[string]struct{}
+	mux sync.Mutex
 }
 
 func (s *set) list() []string {
+	s.mux.Lock()
+	defer s.mux.Unlock()
 	r := []string{}
 	// ignore worning
 	for k, _ := range s.m {
@@ -103,5 +101,7 @@ func (s *set) list() []string {
 }
 
 func (s *set) add(v string) {
+	s.mux.Lock()
+	defer s.mux.Unlock()
 	s.m[v] = struct{}{}
 }
