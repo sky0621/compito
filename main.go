@@ -9,6 +9,8 @@ import (
 	"time"
 )
 
+var exclusionList = getExclusionList()
+
 // FIXME this is prototype program
 // FIXME think package
 func main() {
@@ -45,6 +47,7 @@ func main() {
 
 	end := time.Now()
 	fmt.Println("===========================")
+	fmt.Printf("生成単語数 %d\n", len(l))
 	fmt.Printf("最初から単語の組み合わせ作成まで %f秒\n", (end.Sub(next)).Seconds())
 	fmt.Printf("最初から最後の標準出力まで       %f秒\n", (end.Sub(start)).Seconds())
 	fmt.Println("===========================")
@@ -53,7 +56,11 @@ func main() {
 func addWord(set *set, characters []string, parentChar string) {
 	chLen := len(characters)
 	for i, c := range characters {
-		set.add(fmt.Sprintf("%s%s", parentChar, c))
+		thisWord := fmt.Sprintf("%s%s", parentChar, c)
+		if containsInSlice(thisWord, exclusionList) {
+			continue
+		}
+		set.add(thisWord)
 		cpCharacters := make([]string, chLen, chLen)
 		copy(cpCharacters, characters)
 		addWord(set, getRemaining(cpCharacters, i), fmt.Sprintf("%s%s", parentChar, c))
@@ -71,6 +78,40 @@ func getRemaining(characters []string, index int) []string {
 	before := characters[:index]
 	after := characters[index+1:]
 	return append(before, after...)
+}
+
+func getExclusionList() []string {
+	return []string{
+		"ae",
+		"afk", "afn", "afs", "atf", "atk", "ats",
+		"ean", "eak", "ekn",
+		"enna", "ennf", "ennk", "enns", "ennt",
+		"fn", "fs", "fk",
+		"frk", "ftr", "fta", "fte", "ftn", "fts", "fnn",
+		"ias", "ika", "ikn", "ikr", "iks", "ikt", "ikf", "ifa", "ife", "ifk", "ifr", "ifs", "ift", "iea", "iet", "iek", "ief",
+		"kt", "ks", "kf",
+		"knn", "krn", "krf", "krt", "knf", "knt", "kns",
+		"kren",
+		"nn", "nk", "nf",
+		"ntk", "nts", "nrk", "nre", "nte", "nta", "nti", "ntn", "ntr",
+		"rk", "rt", "rs", "rn",
+		"rfk", "rfs", "rft", "rfa", "rfe", "rfn",
+		"sf",
+		"snn", "snk", "snf", "snt", "stn", "stf", "stk", "srn", "srt", "srk", "snr", "skn", "sek",
+		"tf", "tk", "tn",
+		"tnn", "tsr", "tsn", "tse", "tsf", "trs", "trf", "trn", "trk", "tef", "tsk",
+		"tska", "tske", "tskn", "tskf", "tskr", "tsan", "tsak", "tsaf", "tsae",
+		"tsarn", "tsark", "tsarf",
+	}
+}
+
+func containsInSlice(str string, slice []string) bool {
+	for _, s := range slice {
+		if s == str {
+			return true
+		}
+	}
+	return false
 }
 
 // -------------------------------------------------------------
