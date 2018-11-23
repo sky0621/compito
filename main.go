@@ -34,11 +34,12 @@ func main() {
 
 	gSet = util.NewSet()
 
-	makeWord("", aryWords)
+	makeWord(aryWords, "")
 
 	l := gSet.List()
 	sort.Strings(l)
 
+	fmt.Println()
 	for _, s := range l {
 		fmt.Println(s)
 	}
@@ -49,14 +50,15 @@ func main() {
 	fmt.Println("===========================")
 }
 
-func makeWord(baseCharacter string, characters []string) {
-	if len(characters) == 0 {
-		gSet.Add(baseCharacter)
-		// fmt.Println(baseCharacter)
+func makeWord(addCharacters []string, resultString string) {
+	if len(addCharacters) == 0 {
+		gSet.Add(resultString)
 		return
 	}
-	for i, _ := range characters {
-		t, r := util.Separate(characters, i)
-		makeWord(baseCharacter+t, r)
+	for loopIdx, addCharacter := range addCharacters {
+		targetCharacter, remains := util.Separate(addCharacters, loopIdx)
+		makeWord(remains, resultString+targetCharacter)
+
+		fmt.Printf("[base:%s][addCharacter:%s][resultString:%s]\n", resultString, addCharacter, resultString+targetCharacter)
 	}
 }
