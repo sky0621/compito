@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
 	"sort"
@@ -11,6 +12,18 @@ import (
 )
 
 var gSet *util.Set
+
+var argIdx = 1
+
+var showPassage bool
+
+func init() {
+	flag.BoolVar(&showPassage, "sp", false, "show passage flg")
+	flag.Parse()
+	if showPassage {
+		argIdx = 2
+	}
+}
 
 // FIXME this is prototype program
 // FIXME think package
@@ -23,7 +36,7 @@ func main() {
 
 	// FIXME check args
 
-	word := args[1]
+	word := args[argIdx]
 	fmt.Printf("入力文字列：%s\n", word)
 
 	lowerWord := strings.ToLower(word)
@@ -59,6 +72,8 @@ func makeWord(addCharacters []string, resultString string) {
 		targetCharacter, remains := util.Separate(addCharacters, loopIdx)
 		makeWord(remains, resultString+targetCharacter)
 
-		fmt.Printf("[追加前：%12s][追加文字：%s][追加後：%12s]\n", resultString, addCharacter, resultString+targetCharacter)
+		if showPassage {
+			fmt.Printf("[追加前：%12s][追加文字：%s][追加後：%12s]\n", resultString, addCharacter, resultString+targetCharacter)
+		}
 	}
 }
