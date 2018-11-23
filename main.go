@@ -24,30 +24,30 @@ func main() {
 	// FIXME check args
 
 	word := args[1]
-	fmt.Printf("input word:%s\n", word)
+	fmt.Printf("入力文字列：%s\n", word)
 
 	lowerWord := strings.ToLower(word)
 
-	aryWords := strings.Split(lowerWord, "")
-	sort.Strings(aryWords)
-	fmt.Printf("aryWords:%s\n", aryWords)
+	inputCharacters := strings.Split(lowerWord, "")
+	sort.Strings(inputCharacters)
+	fmt.Printf("入力文字列をスライス化してソート：%s\n\n", inputCharacters)
 
 	gSet = util.NewSet()
 
-	makeWord(aryWords, "")
+	fmt.Println("<処理開始>")
+	makeWord(inputCharacters, "")
 
 	l := gSet.List()
 	sort.Strings(l)
 
-	fmt.Println()
+	fmt.Printf("\n<処理結果>\n")
 	for _, s := range l {
 		fmt.Println(s)
 	}
 
 	end := time.Now()
-	fmt.Println("===========================")
-	fmt.Printf("最初から最後の標準出力まで       %f秒\n", (end.Sub(start)).Seconds())
-	fmt.Println("===========================")
+
+	fmt.Printf("\n処理時間：%f秒\n", (end.Sub(start)).Seconds())
 }
 
 func makeWord(addCharacters []string, resultString string) {
@@ -59,6 +59,6 @@ func makeWord(addCharacters []string, resultString string) {
 		targetCharacter, remains := util.Separate(addCharacters, loopIdx)
 		makeWord(remains, resultString+targetCharacter)
 
-		fmt.Printf("[base:%s][addCharacter:%s][resultString:%s]\n", resultString, addCharacter, resultString+targetCharacter)
+		fmt.Printf("[追加前：%12s][追加文字：%s][追加後：%12s]\n", resultString, addCharacter, resultString+targetCharacter)
 	}
 }
